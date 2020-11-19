@@ -1,0 +1,8 @@
+﻿  MyOGL.cpp
+  OpenGLrememberProj.cpp
+C:\Users\host_\FarhadNikolaevCGLab3\OpenGLrememberProj\OpenGLrememberProj.cpp(149,12): warning C4101: wmEvent: неиспользованная локальная переменная
+C:\Users\host_\FarhadNikolaevCGLab3\OpenGLrememberProj\OpenGLrememberProj.cpp(149,6): warning C4101: wmId: неиспользованная локальная переменная
+  Render.cpp
+C:\Users\host_\FarhadNikolaevCGLab3\OpenGLrememberProj\Render.cpp(346,9): warning C4101: Points2: неиспользованная локальная переменная
+  Создание кода...
+  OpenGLrememberProj.vcxproj -> C:\Users\host_\FarhadNikolaevCGLab3\Debug\OpenGLrememberProj.exe
