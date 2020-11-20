@@ -52,9 +52,9 @@ double Calculating_First_Formula(double p1, double p2, double p3, double p4, dou
 
 double* Calculating_Second_Formula(double* p1, double* p2, double* p3, double* p4, double t){
 	double* Trace = new double[3];
-	Trace[0] = -3 * p1[0] + 6 * p1[0] * t - 3 * p1[0] * t * t + 3 * p2[0] - 12 * p2[0] * t + 9 * p2[0] * t * t + 6 * p3[0] * t - 9 * p3[0] * t * t + 3 * p4[0] * t * t;
-	Trace[1] = -3 * p1[1] + 6 * p1[1] * t - 3 * p1[1] * t * t + 3 * p2[1] - 12 * p2[1] * t + 9 * p2[1] * t * t + 6 * p3[1] * t - 9 * p3[1] * t * t + 3 * p4[1] * t * t;
-	Trace[2] = -3 * p1[2] + 6 * p1[2] * t - 3 * p1[2] * t * t + 3 * p2[2] - 12 * p2[2] * t + 9 * p2[2] * t * t + 6 * p3[2] * t - 9 * p3[2] * t * t + 3 * p4[2] * t * t;
+	Trace[0] = -3 * p1[0] + 6 * p1[0] * t - 3 * p1[0] * t * t + 3 * p2[0] - 12 * p2[0] * t + 9 * p2[0] * t * t + 6 * p3[0] * t - 9 * p3[0] * t * t - 3 * p4[0] * t * t;
+	Trace[1] = -3 * p1[1] + 6 * p1[1] * t - 3 * p1[1] * t * t + 3 * p2[1] - 12 * p2[1] * t + 9 * p2[1] * t * t + 6 * p3[1] * t - 9 * p3[1] * t * t - 3 * p4[1] * t * t;
+	Trace[2] = -3 * p1[2] + 6 * p1[2] * t - 3 * p1[2] * t * t + 3 * p2[2] - 12 * p2[2] * t + 9 * p2[2] * t * t + 6 * p3[2] * t - 9 * p3[2] * t * t - 3 * p4[2] * t * t;
 	return Trace;
 }
 
