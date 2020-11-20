@@ -24,7 +24,7 @@ double Calculating_Vector_Angle(double a1, double b1, double c1, double a2, doub
 }
 
 
-double Calculating_Length3d(double a1, double b1, double c1, double a2, double b2, double c2)
+double Calculating_Length_Points(double a1, double b1, double c1, double a2, double b2, double c2)
 {
 	double res;
 	res = sqrt(((a2 - a1) * (a2 - a1)) + ((b2 - b1) * (b2 - b1)) + ((c2 - c1) * (c2 - c1)));
@@ -34,7 +34,7 @@ double Calculating_Length3d(double a1, double b1, double c1, double a2, double b
 double* Calculating_Normal(double a1, double b1, double c1)
 {
 	double *normal = new double[3];
-	double locLength = Calculating_Length3d(0, 0, 0, a1, b1, c1);
+	double locLength = Calculating_Length_Points(0, 0, 0, a1, b1, c1);
 	double inv_length = (1 / locLength);
 	normal[0] = a1 * inv_length;
 	normal[1] = b1 * inv_length;
@@ -119,7 +119,7 @@ void Shuriken() {
 	double C3[] = { 0,-0.6,0 };
 	double C4[] = { 0,-1,0 };
 
-
+	
 	glColor3d(0.3, 0.3, 0.3);
 	glBegin(GL_TRIANGLES);
 
@@ -140,81 +140,15 @@ void Shuriken() {
 	glVertex3d(0.5, 0.6, 0);
 
 	glEnd();
-
+	
 }
 
-void Bezier_Curve(double delta_time) {
-	if (flag == 0) t_max += delta_time / 10;
-	if (t_max > 1) flag = 1;
-	if (flag == 1) t_max -= delta_time / 10; 
-	if (t_max < 0) flag = 0;
-
-	double Point1[] = { 0,0,0 }; 
-	double Point2[] = { 3,7,30 };
-	double Point3[] = { 13,5,5 };
-	double Point4[] = { -8,20,6 };
-
-	double t_res = 0.001;
+void Animation(double Point1[], double Point2[], double Point3[], double Point4[], double t_max) {
 
 	double* Trace = new double[3];
-	double Vector_Points[3];
-	double* Vector;
-
-	Vector_Points[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t_max + t_res);
-	Vector_Points[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t_max + t_res);
-	Vector_Points[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t_max + t_res);
-
-	Trace[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t_max);
-	Trace[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t_max);
-	Trace[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t_max);
-
-	
-
-	Vector_Points[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t_max + t_res);
-	Vector_Points[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t_max + t_res);
-	Vector_Points[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t_max + t_res);
-
-	while (Calculating_Length3d(Trace[0], Trace[1], Trace[2], Vector_Points[0], Vector_Points[1], Vector_Points[2]) <= 1) {
-		Vector_Points[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t_max + t_res);
-		Vector_Points[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t_max + t_res);
-		Vector_Points[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t_max + t_res);
-		t_res += 0.001;
-	}
-
-
-	glColor3d(0, 0, 1);
-	glBegin(GL_LINE_STRIP);
-	glVertex3dv(Point1);
-	glVertex3dv(Point2);
-	glVertex3dv(Point3);
-	glVertex3dv(Point4);
-	glEnd();
-	glLineWidth(3);
-	glColor3d(0, 1, 0);
-	glBegin(GL_LINE_STRIP);
-	for (double t = 0; t <= 1; t += 0.001)
-	{
-		Trace[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t * t_max );
-		Trace[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t * t_max );
-		Trace[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t * t_max );
-		glVertex3dv(Trace);
-	}
-	glEnd();
-
-
-	glColor3d(1, 0, 1);
-	glLineWidth(1);
-	glPointSize(10);
-	glColor3d(1, 0, 0);
-	glBegin(GL_POINTS);
-	glVertex3dv(Point1);
-	glVertex3dv(Point2);
-	glVertex3dv(Point3);
-	glVertex3dv(Point4);
-	glEnd();
-
+	double* Vector = new double[3];
 	Trace = Calculating_Second_Formula(Point1, Point2, Point3, Point4, t_max);
-	
+
 	Vector = Calculating_Normal(Trace[0], Trace[1], Trace[2]);
 
 
@@ -250,17 +184,115 @@ void Bezier_Curve(double delta_time) {
 	glRotated(angle, 1, 0, 0);
 	glRotated(angle * 100, 0, 0, 1);
 	Shuriken();
+	
+	glPopMatrix();
 }
 
-void Hermite_Curve() {
+void Bezier_Curve(double delta_time, double P1[], double P2[], double P3[], double P4[], bool animation_option) {
+	if (flag == 0) t_max += delta_time / 10;
+	if (t_max > 1) flag = 1;
+	if (flag == 1) t_max -= delta_time / 10; 
+	if (t_max < 0) flag = 0;
+
+
+
+	double* Point1 = new double[3];
+	double* Point2 = new double[3];
+	double* Point3 = new double[3];
+	double* Point4 = new double[3];
+
+	Point1 = P1;
+	Point2 = P2;
+	Point3 = P3;
+	Point4 = P4;
+
+	double t_res = 0.001;
+
+	double* Trace = new double[3];
+	double Vector_Points[3];
+	
+
+	Vector_Points[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t_max + t_res);
+	Vector_Points[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t_max + t_res);
+	Vector_Points[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t_max + t_res);
+
+	Trace[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t_max);
+	Trace[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t_max);
+	Trace[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t_max);
+
+	
+
+	Vector_Points[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t_max + t_res);
+	Vector_Points[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t_max + t_res);
+	Vector_Points[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t_max + t_res);
+
+	while (Calculating_Length_Points(Trace[0], Trace[1], Trace[2], Vector_Points[0], Vector_Points[1], Vector_Points[2]) <= 1) {
+		Vector_Points[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t_max + t_res);
+		Vector_Points[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t_max + t_res);
+		Vector_Points[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t_max + t_res);
+		t_res += 0.001;
+	}
+
+
+	glColor3d(0, 0, 1);
+	glBegin(GL_LINE_STRIP);
+	glVertex3dv(Point1);
+	glVertex3dv(Point2);
+	glVertex3dv(Point3);
+	glVertex3dv(Point4);
+	glEnd();
+	glLineWidth(3);
+	glColor3d(0, 1, 0);
+	glBegin(GL_LINE_STRIP);
+
+	double animation_time = 1;
+
+	if (animation_option) {
+		animation_time = t_max;
+	}
+	for (double t = 0; t <= 1; t += 0.001)
+	{
+		Trace[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t * animation_time );
+		Trace[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t * animation_time );
+		Trace[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t * animation_time );
+		glVertex3dv(Trace);
+	}
+	glEnd();
+
+
+	glColor3d(1, 0, 1);
+	glLineWidth(1);
+	glPointSize(10);
+	glColor3d(1, 0, 0);
+	glBegin(GL_POINTS);
+	glVertex3dv(Point1);
+	glVertex3dv(Point2);
+	glVertex3dv(Point3);
+	glVertex3dv(Point4);
+	glEnd();
+
+	if (animation_option) {
+		Animation(Point1, Point2, Point3, Point4, t_max);
+	}
+}
+
+
+
+void Hermite_Curve(double P1[], double P2[], double P3[], double P4[]) {
 	
 	glPopMatrix();
 	glPushMatrix();
-	glTranslated(7, 0, 0);
-	double Ermit_Point1[] = { 0,0,0 };
-	double Ermit_Point2[] = { 3,7,4 };
-	double Ermit_Point3[] = { 2,1,1 };
-	double Ermit_Point4[] = { 3,-12,4 };
+	
+
+	double* Ermit_Point1 = new double[3];
+	double* Ermit_Point2 = new double[3];
+	double* Ermit_Point3 = new double[3];
+	double* Ermit_Point4 = new double[3];
+	Ermit_Point1 = P1;
+	Ermit_Point2 = P2;
+	Ermit_Point3 = P3;
+	Ermit_Point4 = P4;
+	
 	double Trace[3];
 	glColor3d(1, 0, 0);
 
@@ -350,7 +382,7 @@ void Bezier_Surface() {
 	glPointSize(4);
 	glColor3d(1, 0, 0);
 	glBegin(GL_POINTS);
-	double Points2[4][4][3];
+	
 	 i = 0;
 	 j = 0;
 	for (double u = 0; u <= 1; u += 0.1) {
@@ -407,11 +439,47 @@ void Bezier_Surface() {
 
 void Render(double delta_time)
 {
+	double P1[] = { -18,21,0 };
+	double P2[] = { -2,7,10 };
+	double P3[] = { -4,9,5 };
+	double P4[] = { -8,20,6 };
 
-	Bezier_Curve(delta_time);
-	Hermite_Curve();
+
+	double P11[] = { 0,0,0 };
+	double P22[] = { 3,15,9 };
+	double P33[] = { 14,12,4 };
+	double P44[] = { -3,10,4 };
+
+
+	double Ermit_Point1[] = { 0,0,0 };
+	double Ermit_Point2[] = { 3,7,4 };
+	double Ermit_Point3[] = { 2,1,1 };
+	double Ermit_Point4[] = { 3,-12,4 };
+
+	double Ermit_Point11[] = { 0,0,0 };
+	double Ermit_Point22[] = { 7,4,1 };
+	double Ermit_Point33[] = { 4,3,1.8 };
+	double Ermit_Point44[] = { 5,-7,3.12 };
+
+	
+
+	Bezier_Curve(delta_time, P1, P2, P3, P4, true);
+	
+	Bezier_Curve(delta_time, P11, P22, P33, P44, true);
+	
+
+
 	Bezier_Surface();
+	glTranslated(34, 0, 0);
+	Hermite_Curve(Ermit_Point1, Ermit_Point2, Ermit_Point3, Ermit_Point4);
+	glPopMatrix();
+	
+	
 
+	glTranslated(14, 0, 0);
+	Hermite_Curve(Ermit_Point11, Ermit_Point22, Ermit_Point33, Ermit_Point44);
+	glPopMatrix();
+	
 	
 }
 	
