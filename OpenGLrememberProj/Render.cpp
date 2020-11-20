@@ -152,7 +152,7 @@ void Bezier_Curve(double delta_time) {
 	double Point1[] = { 0,0,0 }; 
 	double Point2[] = { 3,7,30 };
 	double Point3[] = { 13,5,5 };
-	double Point4[] = { -5,20,3 };
+	double Point4[] = { -8,20,6 };
 
 	double t_res = 0.001;
 
