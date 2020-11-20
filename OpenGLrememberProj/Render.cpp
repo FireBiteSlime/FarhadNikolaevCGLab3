@@ -69,19 +69,26 @@ double Factorial(double num) {
 	}
 	return res;
 }
+
 double Calculating_Bernoulli_Formula(double n, double i , double u ) {
 	return ((Factorial(n)/(Factorial(i)* Factorial(n-i)))*pow(u,i)*pow((1-u),(n-i)));
 }
 
-double Calculating_Third_Formula( double P[4][4][3], double u, double v,int num) {
-	double res=0;
+double* Calculating_Third_Formula( double P[4][4][3], double u, double v) {
+
+	double* Trace = new double[3];
+	Trace[0] = 0;
+	Trace[1] = 0;
+	Trace[2] = 0;
 	double P2[3] = { P[1][3][0],P[1][3][1],P[1][3][2] };
 	for (int i = 0; i <= 3; i++) {
 		for (int j = 0; j <= 3; j++) {
-			res += Calculating_Bernoulli_Formula(3, i, u) * Calculating_Bernoulli_Formula(3, j, v) * P[i][j][num];
+			Trace[0] += Calculating_Bernoulli_Formula(3, i, u) * Calculating_Bernoulli_Formula(3, j, v) * P[i][j][0];
+			Trace[1] += Calculating_Bernoulli_Formula(3, i, u) * Calculating_Bernoulli_Formula(3, j, v) * P[i][j][1];
+			Trace[2] += Calculating_Bernoulli_Formula(3, i, u) * Calculating_Bernoulli_Formula(3, j, v) * P[i][j][2];
 		}
 	}
-	return res;
+	return Trace;
 }
 
 
@@ -187,9 +194,9 @@ void Bezier_Curve(double delta_time) {
 	glBegin(GL_LINE_STRIP);
 	for (double t = 0; t <= 1; t += 0.001)
 	{
-		Trace[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t * t_max);
-		Trace[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t * t_max);
-		Trace[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t * t_max);
+		Trace[0] = Calculating_First_Formula(Point1[0], Point2[0], Point3[0], Point4[0], t * t_max );
+		Trace[1] = Calculating_First_Formula(Point1[1], Point2[1], Point3[1], Point4[1], t * t_max );
+		Trace[2] = Calculating_First_Formula(Point1[2], Point2[2], Point3[2], Point4[2], t * t_max );
 		glVertex3dv(Trace);
 	}
 	glEnd();
@@ -289,11 +296,11 @@ void Hermite_Curve() {
 
 void Bezier_Surface() {
 
-	double Trace[3];
+	double* Trace = new double[3];
 	glPushMatrix();
 	glTranslated(-18, 0, 3);
 	double Points[4][4][3] = {
-		{{0,9,1}, {3,9,0}, {6,9,0}, {10,9,1}},
+		{{0,9,1}, {3,11,0}, {6,9,0}, {10,9,1}},
 		{{0,7,0}, {3,6,0}, {6,6,4}, {9,6,0}},
 		{{4,3,0}, {3,4,3}, {7,3,1}, {9,4,0}},
 		{{0,0,1}, {3,0,5}, {9,0,0}, {12,0,1}},
@@ -349,9 +356,8 @@ void Bezier_Surface() {
 	for (double u = 0; u <= 1; u += 0.1) {
 		j = 0;
 		for (double v = 0; v <= 1; v += 0.1) {
-			Trace[0] = Calculating_Third_Formula(Points,u,v,0);
-			Trace[1] = Calculating_Third_Formula(Points, u, v, 1);
-			Trace[2] = Calculating_Third_Formula(Points, u, v, 2);
+			Trace = Calculating_Third_Formula(Points,u,v);
+			
 			glVertex3dv(Trace);
 
 			j += 1;
@@ -372,9 +378,8 @@ void Bezier_Surface() {
 	while (u <= 1) {
 		glBegin(GL_LINE_STRIP);
 		while (v <= 1) {
-			Trace[0] = Calculating_Third_Formula(Points, u, v, 0);
-			Trace[1] = Calculating_Third_Formula(Points, u, v, 1);
-			Trace[2] = Calculating_Third_Formula(Points, u, v, 2);
+			Trace = Calculating_Third_Formula(Points, u, v);
+			
 			glVertex3dv(Trace); 
 			v += 0.1;
 		}
@@ -387,9 +392,8 @@ void Bezier_Surface() {
 	while (u <= 1) {
 		glBegin(GL_LINE_STRIP);
 		while (v <= 1) {
-			Trace[0] = Calculating_Third_Formula(Points, v,u, 0);
-			Trace[1] = Calculating_Third_Formula(Points, v,u, 1);
-			Trace[2] = Calculating_Third_Formula(Points, v,u, 2);
+			Trace = Calculating_Third_Formula(Points, v,u);
+			
 			glVertex3dv(Trace); 
 			v += 0.1;
 		}
